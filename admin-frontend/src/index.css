@@ -1,0 +1,130 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
+
+@import "tailwindcss";
+
+@theme {
+  --color-maroon-50: #fdf2f2;
+  --color-maroon-100: #fbe5e5;
+  --color-maroon-200: #f7cfcf;
+  --color-maroon-300: #efa8a8;
+  --color-maroon-400: #e17878;
+  --color-maroon-500: #ca4b4b;
+  --color-maroon-600: #b23535;
+  --color-maroon-700: #952727;
+  --color-maroon-800: #800000;
+  --color-maroon-900: #670a0a;
+  --color-maroon-950: #410404;
+
+  --color-gold-50: #fefbeb;
+  --color-gold-100: #fef3c7;
+  --color-gold-200: #fde58a;
+  --color-gold-300: #fcd34d;
+  --color-gold-400: #fbbf24;
+  --color-gold-500: #f59e0b;
+  --color-gold-600: #d97706;
+  --color-gold-700: #b45309;
+  --color-gold-800: #92400e;
+  --color-gold-900: #78350f;
+
+  --font-sans: 'Outfit', 'Inter', 'sans-serif';
+}
+
+@layer base {
+  html {
+    font-size: 110%;
+  }
+  body {
+    @apply bg-slate-50 text-slate-800 antialiased font-sans min-h-screen selection:bg-maroon-100 selection:text-maroon-900;
+  }
+}
+
+/* Glassmorphism custom styles */
+.glass {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.glass-dark {
+  background: rgba(128, 0, 0, 0.05);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(128, 0, 0, 0.1);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #800000;
+}
+
+/* Glow effects */
+.glow-maroon {
+  box-shadow: 0 0 15px rgba(128, 0, 0, 0.15);
+}
+
+/* Page fade-in transition */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@media print {
+  /* Hide sidebar aside, header top bar, footer, and any action buttons */
+  aside, header, footer, button, .no-print {
+    display: none !important;
+  }
+  
+  /* Reset document backgrounds and spacing for paper sheets */
+  body, main {
+    background: white !important;
+    color: black !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+  }
+  
+  /* Prevent chart containers or columns from breaking awkwardly */
+  .grid {
+    display: block !important;
+  }
+  
+  .grid > div {
+    margin-bottom: 20px !important;
+    page-break-inside: avoid !important;
+  }
+  
+  /* Make standings table take full printable width */
+  table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+  }
+  
+  tr {
+    page-break-inside: avoid !important;
+  }
+}

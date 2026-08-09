@@ -1,0 +1,17 @@
+# Node.js
+**/node_modules/
+**/.env
+**/.env.local
+
+# Vite / Build outputs
+**/dist/
+**/build/
+
+# IDE files
+**/.vscode/
+**/.idea/
+**/.DS_Store
+
+# Multer / Candidate Photo uploads
+**/backend/uploads/*
+!**/backend/uploads/.gitkeep
