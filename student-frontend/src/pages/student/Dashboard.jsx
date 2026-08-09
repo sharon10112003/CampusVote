@@ -12,6 +12,9 @@ import {
   Loader2
 } from 'lucide-react';
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:5000/api';
+const SERVER_URL = API_URL.replace(/\/api$/, '');
+
 const StudentDashboard = () => {
   const { user, refreshUser } = useAuth();
   const [elections, setElections] = useState([]);
@@ -303,7 +306,7 @@ const StudentDashboard = () => {
                         <div className="flex items-start gap-4">
                           <div className="w-16 h-16 rounded-xl bg-slate-100 border border-slate-200 overflow-hidden flex items-center justify-center text-slate-400 shrink-0">
                             {cand.photoUrl ? (
-                              <img src={`http://127.0.0.1:5000${cand.photoUrl}`} alt={cand.name} className="w-full h-full object-cover" />
+                              <img src={`${SERVER_URL}${cand.photoUrl}`} alt={cand.name} className="w-full h-full object-cover" />
                             ) : (
                               <User size={28} />
                             )}
@@ -366,7 +369,7 @@ const StudentDashboard = () => {
               <div className="flex items-center gap-4 pb-4 border-b border-slate-100">
                 <div className="w-12 h-12 rounded-lg bg-slate-50 border border-slate-200 overflow-hidden flex items-center justify-center text-slate-400 shrink-0 shadow-inner">
                   {manifestoCandidate.photoUrl ? (
-                    <img src={`http://127.0.0.1:5000${manifestoCandidate.photoUrl}`} alt={manifestoCandidate.name} className="w-full h-full object-cover" />
+                    <img src={`${SERVER_URL}${manifestoCandidate.photoUrl}`} alt={manifestoCandidate.name} className="w-full h-full object-cover" />
                   ) : (
                     <User size={22} />
                   )}
