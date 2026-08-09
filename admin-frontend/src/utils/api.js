@@ -1,4 +1,8 @@
-const BASE_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:5000/api';
+let rawUrl = import.meta.env.VITE_API_URL || 'http://127.0.0.1:5000/api';
+if (!rawUrl.endsWith('/api')) {
+  rawUrl = rawUrl.replace(/\/$/, '') + '/api';
+}
+const BASE_URL = rawUrl;
 
 const getHeaders = () => {
   const headers = {
