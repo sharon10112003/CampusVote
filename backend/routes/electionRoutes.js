@@ -73,18 +73,32 @@ router.put('/:id', protect, admin, async (req, res) => {
       election.title = title || election.title;
       election.description = description || election.description;
       election.startDate = startDate || election.startDate;
-      if (status === 'active' && election.status !== 'active') {
-        election.startDate = new Date();
+      let calculatedStatus = status || election.status;
+      const resolvedEndDate = new Date(endDate || election.endDate);
+      const resolvedStartDate = new Date(startDate || election.startDate);
+      const now = new Date();
+
+      // If the election was completed but the admin extends the end date into the future, reactivate it
+      if (calculatedStatus === 'completed' && resolvedEndDate > now) {
+        if (resolvedStartDate <= now) {
+          calculatedStatus = 'active';
+        } else {
+          calculatedStatus = 'scheduled';
+        }
+      }
+
+      if (calculatedStatus === 'active' && election.status !== 'active') {
+        election.startDate = now;
       } else {
         election.startDate = startDate || election.startDate;
       }
 
-      if (status === 'completed' && election.status !== 'completed') {
-        election.endDate = new Date();
+      if (calculatedStatus === 'completed' && election.status !== 'completed') {
+        election.endDate = now;
       } else {
         election.endDate = endDate || election.endDate;
       }
-      election.status = status || election.status;
+      election.status = calculatedStatus;
 
       const updatedElection = await election.save();
       await logAction(req, 'UPDATE_ELECTION', `Updated election: ${election.title}`);
