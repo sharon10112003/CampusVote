@@ -297,10 +297,10 @@ const Login = () => {
                   {showCalendar && (
                     <div 
                       ref={calendarRef}
-                      className="absolute z-50 left-0 right-0 mx-auto sm:left-auto sm:right-0 mt-2 w-[265px] bg-white border border-slate-200 rounded-xl shadow-xl p-3.5 text-center animate-fade-in"
+                      className="absolute z-50 left-0 right-0 mx-auto sm:left-auto sm:right-0 bottom-full mb-2 w-[265px] bg-white border border-slate-200 rounded-xl shadow-xl p-3.5 text-center animate-fade-in"
                     >
                       {/* Pointer Arrow */}
-                      <div className="absolute -top-1.5 left-1/2 -translate-x-1/2 sm:left-auto sm:right-6 sm:translate-x-0 w-3 h-3 bg-white border-t border-l border-slate-200 rotate-45"></div>
+                      <div className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 sm:left-auto sm:right-6 sm:translate-x-0 w-3 h-3 bg-white border-b border-r border-slate-200 rotate-45"></div>
 
                       {/* Month & Year Selectors */}
                       <div className="flex items-center justify-between pb-3.5 border-b border-slate-100 mb-3 gap-1 relative z-10">

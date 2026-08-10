@@ -218,23 +218,13 @@ const AdminDashboard = () => {
                   <button
                     onClick={() => handleStatusChange('active')}
                     disabled={actionLoading}
-                    className="flex items-center gap-2 px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-sm transition shadow-sm"
-                  >
-                    <Play size={16} />
-                    Start Election
-                  </button>
-                )}
-
-                {analytics.election.status === 'scheduled' && (
-                  <button
-                    onClick={() => handleStatusChange('active')}
-                    disabled={actionLoading}
                     className="flex items-center gap-2 px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-sm transition shadow-sm no-print"
                   >
                     <Play size={16} />
                     Start Election
                   </button>
                 )}
+
 
                 {analytics.election.status === 'active' && (
                   <button
