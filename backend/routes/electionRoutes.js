@@ -73,10 +73,16 @@ router.put('/:id', protect, admin, async (req, res) => {
       election.title = title || election.title;
       election.description = description || election.description;
       election.startDate = startDate || election.startDate;
-      if (status === 'active') {
+      if (status === 'active' && election.status !== 'active') {
         election.startDate = new Date();
-      } else if (status === 'completed') {
+      } else {
+        election.startDate = startDate || election.startDate;
+      }
+
+      if (status === 'completed' && election.status !== 'completed') {
         election.endDate = new Date();
+      } else {
+        election.endDate = endDate || election.endDate;
       }
       election.status = status || election.status;
 
