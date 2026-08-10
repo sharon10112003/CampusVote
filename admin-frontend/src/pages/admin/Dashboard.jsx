@@ -70,9 +70,22 @@ const AdminDashboard = () => {
   }, []);
 
   useEffect(() => {
-    if (selectedElectionId) {
-      fetchAnalytics();
-    }
+    if (!selectedElectionId) return;
+    
+    fetchAnalytics();
+
+    const intervalId = setInterval(() => {
+      setAnalytics((currentAnalytics) => {
+        if (currentAnalytics?.election?.status === 'active') {
+          api.get(`/elections/${selectedElectionId}/analytics`)
+            .then((data) => setAnalytics(data))
+            .catch((err) => console.error('Failed to poll live analytics:', err));
+        }
+        return currentAnalytics;
+      });
+    }, 5000);
+
+    return () => clearInterval(intervalId);
   }, [selectedElectionId]);
 
   const handleStatusChange = async (newStatus) => {
