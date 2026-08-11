@@ -6,7 +6,7 @@ const csv = require('csv-parser');
 const xlsx = require('xlsx');
 const User = require('../models/User');
 const { protect, admin } = require('../middleware/authMiddleware');
-const upload = require('../middleware/uploadMiddleware');
+const upload = require('../middleware/documentUploadMiddleware');
 const logAction = require('../utils/auditLogger');
 const bcrypt = require('bcryptjs');
 
@@ -208,12 +208,36 @@ router.post('/import', protect, admin, upload.single('file'), async (req, res) =
         .pipe(csv())
         .on('data', (row) => {
           // Expect keys: registerNumber, name, email, department
-          const regNo = row.registerNumber || row.RegisterNumber || row['Register Number'] || row.regNo;
-          const name = row.name || row.Name;
-          const email = row.email || row.Email || '';
-          const dept = row.department || row.Department || row.dept || '';
-          const dobVal = row.dob || row.dateOfBirth || row.DOB || row['Date of Birth'] || row['date of birth'] || '01-01-2000';
+const regNo =
+  row.registerNumber ||
+  row.RegisterNumber ||
+  row['Register Number'] ||
+  row['Reg. No'] ||
+  row.regNo;
 
+const name =
+  row.name ||
+  row.Name ||
+  row['Student Name'];
+
+const email =
+  row.email ||
+  row.Email ||
+  '';
+
+const dept =
+  row.department ||
+  row.Department ||
+  row.dept ||
+  '';
+
+const dobVal =
+  row.dob ||
+  row.dateOfBirth ||
+  row.DOB ||
+  row['Date of Birth'] ||
+  row['date of birth'] ||
+  '01-01-2000';
           if (regNo && name) {
             studentsToInsert.push({
               registerNumber: regNo.trim(),
