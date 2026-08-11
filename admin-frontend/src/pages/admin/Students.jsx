@@ -350,12 +350,12 @@ const AdminStudents = () => {
       {/* Manual Student Add/Edit Modal */}
       {(showAddModal || editStudent) && (
         <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl w-full max-w-md border border-slate-200 shadow-2xl overflow-hidden animate-fade-in">
+          <div className="bg-white rounded-2xl w-full max-w-md border border-slate-200 shadow-2xl overflow-hidden max-h-[90vh] flex flex-col animate-fade-in">
             <div className="bg-maroon-800 text-white p-5 flex items-center justify-between">
               <h4 className="font-bold text-md">{editStudent ? 'Edit Student Details' : 'Add New Student'}</h4>
               <button onClick={closeModals} className="text-white hover:text-maroon-200 transition font-extrabold text-sm">✕</button>
             </div>
-            <form onSubmit={editStudent ? handleEditSubmit : handleAddSubmit} className="p-6 space-y-4">
+            <form onSubmit={editStudent ? handleEditSubmit : handleAddSubmit} className="p-6 space-y-4 overflow-y-auto flex-1">
               <div className="space-y-3.5">
                 <div>
                   <label className="block text-[10px] uppercase font-bold text-slate-400 tracking-wider mb-1">Register Number</label>

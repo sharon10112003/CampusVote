@@ -79,7 +79,7 @@ router.put('/:id', protect, admin, async (req, res) => {
       const now = new Date();
 
       // If the election was completed but the admin extends the end date into the future, reactivate it
-      if (calculatedStatus === 'completed' && resolvedEndDate > now) {
+      if (election.status === 'completed' && endDate && resolvedEndDate > now) {
         if (resolvedStartDate <= now) {
           calculatedStatus = 'active';
         } else {

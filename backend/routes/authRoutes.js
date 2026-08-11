@@ -71,6 +71,7 @@ router.post('/login', async (req, res) => {
         role: user.role,
         department: user.department,
         dob: user.dob,
+        votedElections: user.votedElections,
         token: generateToken(user._id),
       });
     } else {

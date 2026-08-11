@@ -27,7 +27,7 @@ const StudentLayout = ({ children }) => {
 
           <div className="flex items-center gap-4">
             <div className="flex flex-col items-end text-right">
-              <span className="font-bold text-xs text-white truncate max-w-[110px] sm:max-w-none">{user?.name}</span>
+              <span className="font-bold text-xs text-white truncate max-w-[180px] sm:max-w-none">{user?.name}</span>
               <span className="text-[9px] uppercase font-extrabold tracking-widest text-maroon-200">
                 Reg No: {user?.registerNumber}
               </span>

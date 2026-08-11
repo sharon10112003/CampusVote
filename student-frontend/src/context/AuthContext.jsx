@@ -44,6 +44,7 @@ export const AuthProvider = ({ children }) => {
         email: data.email,
         role: data.role,
         department: data.department,
+        votedElections: data.votedElections || [],
       });
       return data;
     } catch (error) {

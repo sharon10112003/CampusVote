@@ -24,6 +24,7 @@ const StudentDashboard = () => {
   const [resultsData, setResultsData] = useState(null);
   const [manifestoCandidate, setManifestoCandidate] = useState(null);
   const [confirmVoteCandidate, setConfirmVoteCandidate] = useState(null);
+  const [previewPhoto, setPreviewPhoto] = useState(null);
 
   // Status states
   const [loading, setLoading] = useState(true);
@@ -31,7 +32,7 @@ const StudentDashboard = () => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
-  const loadElections = async () => {
+  const loadElections = async (isSilent = false) => {
     try {
       const data = await api.get('/elections');
       const visibleElections = data.filter(
@@ -39,14 +40,45 @@ const StudentDashboard = () => {
       );
       setElections(visibleElections);
 
-      if (visibleElections.length > 0) {
+      if (visibleElections.length > 0 && !selectedElection) {
         const firstActive = visibleElections.find((el) => el.status === 'active') || visibleElections[0];
         handleSelectElection(firstActive);
       }
     } catch (err) {
-      setError('Failed to load elections.');
+      if (!isSilent) setError('Failed to load elections.');
     } finally {
-      setLoading(false);
+      if (!isSilent) setLoading(false);
+    }
+  };
+
+  const refreshBallotData = async () => {
+    try {
+      const data = await api.get('/elections');
+      const visibleElections = data.filter(
+        (el) => el.status === 'active' || el.status === 'completed'
+      );
+      setElections(visibleElections);
+
+      if (selectedElection) {
+        const updatedElection = visibleElections.find(e => e._id === selectedElection._id);
+        if (updatedElection) {
+          setSelectedElection(updatedElection);
+          const detailData = await api.get(`/elections/${selectedElection._id}`);
+          setCandidates(detailData.candidates);
+
+          if (updatedElection.resultsPublished) {
+            const resultsRes = await api.get(`/elections/${selectedElection._id}/analytics`);
+            setResultsData(resultsRes);
+          } else {
+            setResultsData(null);
+          }
+        }
+      } else if (visibleElections.length > 0) {
+        const firstActive = visibleElections.find((el) => el.status === 'active') || visibleElections[0];
+        handleSelectElection(firstActive);
+      }
+    } catch (err) {
+      console.error('Failed to auto-refresh ballot data:', err);
     }
   };
 
@@ -68,7 +100,13 @@ const StudentDashboard = () => {
 
   useEffect(() => {
     loadElections();
-  }, []);
+
+    const intervalId = setInterval(() => {
+      refreshBallotData();
+    }, 5000);
+
+    return () => clearInterval(intervalId);
+  }, [selectedElection?._id]);
 
   const handleCastVote = async () => {
     if (!confirmVoteCandidate || isSubmitting) return;
@@ -303,18 +341,27 @@ const StudentDashboard = () => {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {candidates.map((cand) => (
                       <div key={cand._id} className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm hover:border-slate-350 transition flex flex-col justify-between gap-5 animate-fade-in">
-                        <div className="flex items-start gap-4">
-                          <div className="w-16 h-16 rounded-xl bg-slate-100 border border-slate-200 overflow-hidden flex items-center justify-center text-slate-400 shrink-0">
+                        <div className="flex items-center gap-4">
+                          <div 
+                            onClick={() => cand.photoUrl && setPreviewPhoto({
+                              url: `${SERVER_URL}${cand.photoUrl}`,
+                              name: cand.name,
+                              position: cand.position,
+                              department: cand.department
+                            })}
+                            className={`w-48 h-48 rounded-2xl bg-slate-100 border border-slate-200 overflow-hidden flex items-center justify-center text-slate-400 shrink-0 shadow-sm ${cand.photoUrl ? 'cursor-zoom-in hover:opacity-90 hover:scale-105 transition-all duration-200' : ''}`}
+                            title={cand.photoUrl ? "Click to view full photo" : ""}
+                          >
                             {cand.photoUrl ? (
                               <img src={`${SERVER_URL}${cand.photoUrl}`} alt={cand.name} className="w-full h-full object-cover" />
                             ) : (
-                              <User size={28} />
+                              <User size={72} />
                             )}
                           </div>
                           <div className="space-y-1">
-                            <h5 className="font-bold text-slate-800 leading-tight">{cand.name}</h5>
-                            <p className="text-xs text-maroon-800 font-semibold">{cand.position}</p>
-                            <p className="text-[10px] text-slate-400 font-medium uppercase tracking-wider">{cand.department}</p>
+                            <h5 className="font-extrabold text-slate-800 text-base leading-tight">{cand.name}</h5>
+                            <p className="text-xs text-maroon-800 font-bold">{cand.position}</p>
+                            <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">{cand.department}</p>
                           </div>
                         </div>
 
@@ -367,7 +414,16 @@ const StudentDashboard = () => {
             </div>
             <div className="p-6 space-y-4">
               <div className="flex items-center gap-4 pb-4 border-b border-slate-100">
-                <div className="w-12 h-12 rounded-lg bg-slate-50 border border-slate-200 overflow-hidden flex items-center justify-center text-slate-400 shrink-0 shadow-inner">
+                <div 
+                  onClick={() => manifestoCandidate.photoUrl && setPreviewPhoto({
+                    url: `${SERVER_URL}${manifestoCandidate.photoUrl}`,
+                    name: manifestoCandidate.name,
+                    position: manifestoCandidate.position,
+                    department: manifestoCandidate.department
+                  })}
+                  className={`w-12 h-12 rounded-lg bg-slate-50 border border-slate-200 overflow-hidden flex items-center justify-center text-slate-400 shrink-0 shadow-inner ${manifestoCandidate.photoUrl ? 'cursor-zoom-in hover:opacity-90 hover:scale-105 transition-all duration-200' : ''}`}
+                  title={manifestoCandidate.photoUrl ? "Click to view full photo" : ""}
+                >
                   {manifestoCandidate.photoUrl ? (
                     <img src={`${SERVER_URL}${manifestoCandidate.photoUrl}`} alt={manifestoCandidate.name} className="w-full h-full object-cover" />
                   ) : (
@@ -435,6 +491,47 @@ const StudentDashboard = () => {
                 ) : (
                   <span>Confirm Vote</span>
                 )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Candidate Photo Preview Modal */}
+      {previewPhoto && (
+        <div 
+          className="fixed inset-0 bg-slate-900/80 backdrop-blur-sm flex items-center justify-center z-[100] p-4 cursor-pointer"
+          onClick={() => setPreviewPhoto(null)}
+        >
+          <div 
+            className="bg-white rounded-2xl w-full max-w-sm border border-slate-200 shadow-2xl overflow-hidden animate-scale-up cursor-default"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="bg-maroon-900 text-white p-4 flex items-center justify-between border-b border-maroon-950">
+              <h4 className="font-bold text-xs tracking-wide uppercase">Candidate Photo</h4>
+              <button 
+                onClick={() => setPreviewPhoto(null)} 
+                className="text-white hover:text-maroon-200 transition font-extrabold text-sm cursor-pointer"
+              >
+                ✕
+              </button>
+            </div>
+            <div className="p-6 flex flex-col items-center justify-center gap-4">
+              <div className="w-56 h-56 rounded-2xl bg-slate-100 border border-slate-200 overflow-hidden flex items-center justify-center text-slate-400 shrink-0 shadow-inner">
+                <img src={previewPhoto.url} alt={previewPhoto.name} className="w-full h-full object-cover" />
+              </div>
+              <div className="text-center space-y-1">
+                <h5 className="font-extrabold text-slate-800 text-base leading-tight">{previewPhoto.name}</h5>
+                <p className="text-xs text-maroon-800 font-semibold">{previewPhoto.position}</p>
+                <p className="text-[10px] text-slate-400 font-medium uppercase tracking-wider">{previewPhoto.department}</p>
+              </div>
+            </div>
+            <div className="p-4 border-t border-slate-100 bg-slate-50 flex">
+              <button
+                onClick={() => setPreviewPhoto(null)}
+                className="w-full py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-lg text-xs font-bold transition cursor-pointer"
+              >
+                Close Preview
               </button>
             </div>
           </div>
